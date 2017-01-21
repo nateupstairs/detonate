@@ -6,11 +6,19 @@ import (
 	"net/http"
 )
 
-// Detonation is the type housing code, error, and message
-type Detonation struct {
-	Code    int    `json:"code"`
+// Validation is a struct representing additional validation details
+type Validation struct {
+	Key     string `json:"key"`
 	Error   string `json:"error"`
 	Message string `json:"message"`
+}
+
+// Detonation is the type for housing code, error, and message
+type Detonation struct {
+	Code        int          `json:"code"`
+	Error       string       `json:"error"`
+	Message     string       `json:"message"`
+	Validations []Validation `json:"validations"`
 }
 
 // ToJSON is a basic wrapper around marshaling
@@ -20,11 +28,17 @@ func (d *Detonation) ToJSON() ([]byte, error) {
 	return j, err
 }
 
+// AddValidation is a methodology to add details to the output
+func (d *Detonation) AddValidation(v Validation) {
+	d.Validations = append(d.Validations, v)
+}
+
 // Trigger blows up the detonation and writes the error to the supplied writer
 func (d *Detonation) Trigger(w http.ResponseWriter) {
 	j, err := d.ToJSON()
 	if err != nil {
 		http.Error(w, "System Error", 500)
+
 		return
 	}
 
