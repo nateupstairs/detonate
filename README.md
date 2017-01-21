@@ -44,7 +44,7 @@ generates
 }
 ```
 
-You can also generate an error manually
+You can also generate an error manually:
 
 ```go
 func route(w http.ResponseWriter, r *http.Request, param httprouter.Params) {
@@ -62,5 +62,31 @@ func route(w http.ResponseWriter, r *http.Request, param httprouter.Params) {
 }
 ```
 
-### TODO
-* data handling, like json return with specific errors for validation
+you can add validations if you want to give specific feedback for user data:
+
+```go
+func route(w http.ResponseWriter, r *http.Request, param httprouter.Params) {
+	d := detonate.BadData("Information Invalid")
+    v := detonate.CreateValidation("testkey", "Test", "maybe don't do it wrong?")
+    d.AddValidation(v)
+    d.trigger(w)
+    return
+}
+```
+
+generates
+
+```json
+{
+    "code":422,
+    "error":"Unprocessable Entity",
+    "message":"Information Invalid",
+    "validations":[
+        {
+            "key":"testkey",
+            "error":"Test",
+            "message":"maybe don't do it wrong?"
+        }
+    ]
+}
+```

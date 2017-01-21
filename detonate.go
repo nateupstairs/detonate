@@ -50,11 +50,22 @@ func (d *Detonation) Trigger(w http.ResponseWriter) {
 }
 
 // Create lets you manually generate a detonation
-func Create(code int, name string, message string) Detonation {
+func Create(code int, error string, message string) Detonation {
 	var d = new(Detonation)
 
 	d.Code = code
-	d.Error = name
+	d.Error = error
+	d.Message = message
+
+	return *d
+}
+
+// Create lets you manually generate a validation
+func CreateValidation(key string, error string, message string) Validation {
+	var d = new(Validation)
+
+	d.Key = key
+	d.Error = error
 	d.Message = message
 
 	return *d
